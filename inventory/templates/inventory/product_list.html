@@ -1,0 +1,23 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% block content %}
+    {% for product in object_list %}
+        <div class="col-4 mb-4">
+            {% if product.image %}
+                <a href="{% url 'product:detail' product.pk %}">
+                    <img src="{{ product.image.url }}" class="img-thumbnail">
+                </a>
+            {% endif %}
+            <h3 class="">
+                <a href="#">{{ product.name }}</a>
+            </h3>
+            <p>{{ product.description|truncatewords:10 }}</p>
+            {# Like button for the product #}
+            <h4>Price: {{ product.price }}</h4>
+            <a href="{% url 'store:add-to-cart' product.pk %}" class="btn btn-dark rounded">
+                🛒
+                افزودن به سبد خرید
+            </a>
+        </div>
+    {% endfor %}
+{% endblock %}

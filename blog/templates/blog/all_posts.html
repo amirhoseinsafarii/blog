@@ -1,0 +1,72 @@
+{% extends 'blog/base.html' %}
+{% block page_header_title %}
+    نمایش همه پست ها
+{% endblock %}
+{% block content %}
+    <div class="col-2">
+        <h5>filter by category:</h5>
+        <ul>
+            {% for category in category_list %}
+                <h5>{{ category.name }}</h5>
+                <li>
+                    <a href="{% url 'blog:post-by-category' category.0 %}">{{ category.0 }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-10 row justify-content-md-left">
+    {% for post in object_list %}
+        {# One single post #}
+        <div class="col mb-3">
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="img-thumbnail">
+            {% endif %}
+            <div class="d-flex">
+                <h2>
+                    <a href="{% url 'blog:viewpost' post.pk %}">{{ post.title }}</a>
+                </h2>
+
+            </div>
+            <p>{{ post.body | truncatewords:5 }}</p>
+            <h6>{{ post.created_on }} by {{ post.creator.username }}</h6>
+            <strong>{{ post.creator.first_name }} {{ post.creator.last_name }}</strong>
+            <a class="btn btn-outline-dark text-danger like-btn" data-post-id="{{ post.id }}">❤ like (<span id="like-count-{{ post.id }}">{{ post.like }}</span> like)</a>
+        </div>
+    {% endfor %}
+    {% for post in object_list_2 %}
+        {# One single post #}
+        <div class="col mb-3">
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="img-thumbnail">
+            {% endif %}
+            <div class="d-flex">
+                <h2>
+                    
+                </h2>
+
+            </div>
+            <p>{{ post.body | truncatewords:5 }}</p>
+            <h6>{{ post.created_on }} by {{ post.creator.username }}</h6>
+            <strong>{{ post.creator.first_name }} {{ post.creator.last_name }}</strong>
+            <a class="btn btn-outline-dark text-danger like-btn" data-post-id="{{ post.id }}">❤ like (<span id="like-count-{{ post.id }}">{{ post.like }}</span> like)</a>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}
+{% block page_scripts %}
+    <script>
+        $(document).ready(function () {
+            $('.like-btn').on('click', function (event) {
+                var postId = $(event.target)[0].dataset.postId;
+                $.ajax({
+                    url: '/blog/like-post/' + postId,
+                    method: 'POST',
+                    success: function (response) {
+                        var like = response.like;
+                        $('#like-count-' + postId).html(like);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
